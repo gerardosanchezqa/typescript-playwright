@@ -1,26 +1,41 @@
 name: Playwright Tests
+
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch: # Enables manual run button in GitHub Actions UI
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: lts/*
+        cache: 'npm' # Caches npm packages to speed up pipeline execution
+
     - name: Install dependencies
       run: npm ci
-    - name: Install Playwright Browsers
+
+    - name: Install Playwright Browsers & OS Dependencies
       run: npx playwright install --with-deps
+
     - name: Run Playwright tests
       run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      env:
+        CI: true # Triggers CI-specific rules in playwright.config.ts (retries, workers)
+
+    - name: Upload Playwright HTML Report & Debug Artifacts
+      uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }} # Ensures report uploads on pass, fail, or timeout
       with:
         name: playwright-report
         path: playwright-report/
