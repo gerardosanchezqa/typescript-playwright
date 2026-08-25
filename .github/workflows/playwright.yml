@@ -7,6 +7,15 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
   test:
     timeout-minutes: 60
@@ -41,10 +50,20 @@ jobs:
       env:
         CI: true
 
-    - name: Upload Playwright HTML Report
-      uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+    - name: Upload Artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v3
+      if: always()
       with:
-        name: playwright-report
         path: playwright-report/
-        retention-days: 30
+
+  deploy-report:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
