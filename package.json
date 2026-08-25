@@ -1,0 +1,24 @@
+{
+  "name": "typescript-playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:e2e": "playwright test tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gerardosanchezqa/typescript-playwright.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gerardosanchezqa/typescript-playwright/issues"
+  },
+  "homepage": "https://github.com/gerardosanchezqa/typescript-playwright#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.3.0"
+  }
+}
